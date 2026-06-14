@@ -3,63 +3,145 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\Project;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Task::where('user_id', auth()->id());
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('priority')) {
+            $query->where('priority', $request->priority);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $tasks = $query->with(['project', 'category'])->latest()->get();
+
+        return view('tasks.index', compact('tasks'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $projects = Project::where('user_id', auth()->id())->get();
+        $categories = Category::where('user_id', auth()->id())->get();
+
+        return view('tasks.create', compact('projects', 'categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'category_id' => 'nullable|exists:categories,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'status' => 'required|in:todo,in_progress,done',
+            'priority' => 'required|in:low,medium,high',
+            'due_date' => 'nullable|date',
+            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        // Pastikan project memang milik user yang login
+        Project::where('id', $validated['project_id'])
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $this->storeAttachment($request->file('attachment'));
+        }
+
+        $validated['user_id'] = auth()->id();
+
+        Task::create($validated);
+
+        return redirect()->route('tasks.index')->with('success', 'Task berhasil dibuat.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Task $task)
     {
-        //
+        $this->authorizeOwner($task);
+
+        return view('tasks.show', compact('task'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Task $task)
     {
-        //
+        $this->authorizeOwner($task);
+
+        $projects = Project::where('user_id', auth()->id())->get();
+        $categories = Category::where('user_id', auth()->id())->get();
+
+        return view('tasks.edit', compact('task', 'projects', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Task $task)
     {
-        //
+        $this->authorizeOwner($task);
+
+        $validated = $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'category_id' => 'nullable|exists:categories,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'status' => 'required|in:todo,in_progress,done',
+            'priority' => 'required|in:low,medium,high',
+            'due_date' => 'nullable|date',
+            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        Project::where('id', $validated['project_id'])
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if ($request->hasFile('attachment')) {
+            if ($task->attachment) {
+                Storage::disk('local')->delete($task->attachment);
+            }
+            $validated['attachment'] = $this->storeAttachment($request->file('attachment'));
+        }
+
+        $task->update($validated);
+
+        return redirect()->route('tasks.index')->with('success', 'Task berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Task $task)
     {
-        //
+        $this->authorizeOwner($task);
+
+        if ($task->attachment) {
+            Storage::disk('local')->delete($task->attachment);
+        }
+
+        $task->delete();
+
+        return redirect()->route('tasks.index')->with('success', 'Task berhasil dihapus.');
+    }
+
+    private function storeAttachment($file): string
+    {
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+        return $file->storeAs('attachments', $filename, 'local');
+    }
+
+    private function authorizeOwner(Task $task): void
+    {
+        abort_unless(
+            $task->user_id === auth()->id() || auth()->user()->isAdmin(),
+            403
+        );
     }
 }
