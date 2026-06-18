@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTaskRequest;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\Category;
@@ -40,18 +41,9 @@ class TaskController extends Controller
         return view('tasks.create', compact('projects', 'categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request)
     {
-        $validated = $request->validate([
-            'project_id' => 'required|exists:projects,id',
-            'category_id' => 'nullable|exists:categories,id',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:2000',
-            'status' => 'required|in:todo,in_progress,done',
-            'priority' => 'required|in:low,medium,high',
-            'due_date' => 'nullable|date',
-            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-        ]);
+        $validated = $request->validated();
 
         Project::where('id', $validated['project_id'])
             ->where('user_id', auth()->id())
@@ -85,20 +77,11 @@ class TaskController extends Controller
         return view('tasks.edit', compact('task', 'projects', 'categories'));
     }
 
-    public function update(Request $request, Task $task)
+    public function update(StoreTaskRequest $request, Task $task)
     {
         $this->authorize('update', $task);
 
-        $validated = $request->validate([
-            'project_id' => 'required|exists:projects,id',
-            'category_id' => 'nullable|exists:categories,id',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:2000',
-            'status' => 'required|in:todo,in_progress,done',
-            'priority' => 'required|in:low,medium,high',
-            'due_date' => 'nullable|date',
-            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-        ]);
+        $validated = $request->validated();
 
         Project::where('id', $validated['project_id'])
             ->where('user_id', auth()->id())
