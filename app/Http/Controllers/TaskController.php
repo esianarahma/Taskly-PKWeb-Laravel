@@ -53,7 +53,6 @@ class TaskController extends Controller
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-        // Pastikan project memang milik user yang login
         Project::where('id', $validated['project_id'])
             ->where('user_id', auth()->id())
             ->firstOrFail();
@@ -71,14 +70,14 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        $this->authorizeOwner($task);
+        $this->authorize('view', $task);
 
         return view('tasks.show', compact('task'));
     }
 
     public function edit(Task $task)
     {
-        $this->authorizeOwner($task);
+        $this->authorize('update', $task);
 
         $projects = Project::where('user_id', auth()->id())->get();
         $categories = Category::where('user_id', auth()->id())->get();
@@ -88,7 +87,7 @@ class TaskController extends Controller
 
     public function update(Request $request, Task $task)
     {
-        $this->authorizeOwner($task);
+        $this->authorize('update', $task);
 
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
@@ -119,7 +118,7 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
-        $this->authorizeOwner($task);
+        $this->authorize('delete', $task);
 
         if ($task->attachment) {
             Storage::disk('local')->delete($task->attachment);
@@ -130,18 +129,19 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success', 'Task berhasil dihapus.');
     }
 
+    public function download(Task $task)
+    {
+        $this->authorize('view', $task);
+
+        abort_unless($task->attachment, 404);
+
+        return Storage::disk('local')->download($task->attachment);
+    }
+
     private function storeAttachment($file): string
     {
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
 
         return $file->storeAs('attachments', $filename, 'local');
-    }
-
-    private function authorizeOwner(Task $task): void
-    {
-        abort_unless(
-            $task->user_id === auth()->id() || auth()->user()->isAdmin(),
-            403
-        );
     }
 }
