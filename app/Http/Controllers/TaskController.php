@@ -6,12 +6,15 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\Category;
+use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
+    use LogsActivity;
+
     public function index(Request $request)
     {
         $query = Task::where('user_id', auth()->id());
@@ -55,7 +58,8 @@ class TaskController extends Controller
 
         $validated['user_id'] = auth()->id();
 
-        Task::create($validated);
+        $task = Task::create($validated);
+        $this->logActivity('create', $task);
 
         return redirect()->route('tasks.index')->with('success', 'Task berhasil dibuat.');
     }
@@ -95,6 +99,7 @@ class TaskController extends Controller
         }
 
         $task->update($validated);
+        $this->logActivity('update', $task);
 
         return redirect()->route('tasks.index')->with('success', 'Task berhasil diperbarui.');
     }
@@ -107,6 +112,7 @@ class TaskController extends Controller
             Storage::disk('local')->delete($task->attachment);
         }
 
+        $this->logActivity('delete', $task);
         $task->delete();
 
         return redirect()->route('tasks.index')->with('success', 'Task berhasil dihapus.');
