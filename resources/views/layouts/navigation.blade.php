@@ -23,7 +23,12 @@
                     </x-nav-link>
                     <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                         {{ __('Categories') }}
-                    </x-nav-link>        
+                    </x-nav-link>
+                    @if (auth()->user()->isAdmin())
+                        <x-nav-link :href="route('admin.activity-logs')" :active="request()->routeIs('admin.*')">
+                            {{ __('Activity Logs') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -87,7 +92,12 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                 {{ __('Categories') }}
-            </x-responsive-nav-link>           
+            </x-responsive-nav-link>
+            @if (auth()->user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.activity-logs')" :active="request()->routeIs('admin.*')">
+                    {{ __('Activity Logs') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
