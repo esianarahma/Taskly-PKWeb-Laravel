@@ -1,102 +1,98 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Task') }}
-        </h2>
+        <h2 class="text-lg font-medium text-brand-dark">Tambah Task Baru</h2>
+        <p class="text-sm text-brand mt-1">Isi detail task yang ingin kamu kerjakan</p>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                @if ($projects->isEmpty())
-                    <div class="mb-4 p-3 bg-yellow-100 text-yellow-700 rounded-md text-sm">
-                        Kamu belum punya project. <a href="{{ route('projects.create') }}" class="underline font-medium">Buat project dulu</a> sebelum menambah task.
-                    </div>
-                @else
-                    <form method="POST" action="{{ route('tasks.store') }}" enctype="multipart/form-data">
-                        @csrf
-
-                        <div class="mb-4">
-                            <x-input-label for="title" :value="__('Judul Task')" />
-                            <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title')" required autofocus />
-                            <x-input-error :messages="$errors->get('title')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="description" :value="__('Deskripsi')" />
-                            <textarea id="description" name="description" rows="3"
-                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ old('description') }}</textarea>
-                            <x-input-error :messages="$errors->get('description')" class="mt-2" />
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <x-input-label for="project_id" :value="__('Project')" />
-                                <select id="project_id" name="project_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    @foreach ($projects as $project)
-                                        <option value="{{ $project->id }}" @selected(old('project_id') == $project->id)>{{ $project->name }}</option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('project_id')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="category_id" :value="__('Kategori (opsional)')" />
-                                <select id="category_id" name="category_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">- Tanpa kategori -</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('category_id')" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <x-input-label for="status" :value="__('Status')" />
-                                <select id="status" name="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="todo" @selected(old('status', 'todo') === 'todo')>Todo</option>
-                                    <option value="in_progress" @selected(old('status') === 'in_progress')>In Progress</option>
-                                    <option value="done" @selected(old('status') === 'done')>Done</option>
-                                </select>
-                                <x-input-error :messages="$errors->get('status')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="priority" :value="__('Prioritas')" />
-                                <select id="priority" name="priority" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="low" @selected(old('priority') === 'low')>Low</option>
-                                    <option value="medium" @selected(old('priority', 'medium') === 'medium')>Medium</option>
-                                    <option value="high" @selected(old('priority') === 'high')>High</option>
-                                </select>
-                                <x-input-error :messages="$errors->get('priority')" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="due_date" :value="__('Deadline')" />
-                            <x-text-input id="due_date" name="due_date" type="date" class="mt-1 block w-full" :value="old('due_date')" />
-                            <x-input-error :messages="$errors->get('due_date')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="attachment" :value="__('Lampiran (opsional)')" />
-                            <input id="attachment" name="attachment" type="file"
-                                class="mt-1 block w-full text-sm text-gray-600 border border-gray-300 rounded-md cursor-pointer">
-                            <p class="text-xs text-gray-400 mt-1">Maks. 2MB. Format: pdf, jpg, jpeg, png</p>
-                            <x-input-error :messages="$errors->get('attachment')" class="mt-2" />
-                        </div>
-
-                        <div class="flex justify-end gap-3">
-                            <a href="{{ route('tasks.index') }}" class="px-4 py-2 text-sm text-gray-600 hover:underline">Batal</a>
-                            <x-primary-button>{{ __('Simpan') }}</x-primary-button>
-                        </div>
-                    </form>
-                @endif
-
+        @if ($projects->isEmpty())
+            <div class="card-pink text-center py-8">
+                <p class="text-sm text-gray-500 mb-4">Kamu belum punya project. Buat project dulu sebelum menambah task.</p>
+                <a href="{{ route('projects.create') }}" class="btn-pink">+ Buat Project</a>
             </div>
-        </div>
+        @else
+            <div class="card-pink">
+                <form method="POST" action="{{ route('tasks.store') }}" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-brand mb-1">Judul Task *</label>
+                        <input type="text" name="title" value="{{ old('title') }}"
+                            class="input-pink" placeholder="Contoh: Buat halaman login" required autofocus/>
+                        <x-input-error :messages="$errors->get('title')" class="mt-1" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-brand mb-1">Deskripsi</label>
+                        <textarea name="description" rows="3"
+                            class="input-pink" placeholder="Jelaskan detail task ini...">{{ old('description') }}</textarea>
+                        <x-input-error :messages="$errors->get('description')" class="mt-1" />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium text-brand mb-1">Project *</label>
+                            <select name="project_id" class="input-pink">
+                                @foreach ($projects as $project)
+                                    <option value="{{ $project->id }}" @selected(old('project_id') == $project->id)>{{ $project->name }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('project_id')" class="mt-1" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-brand mb-1">Kategori</label>
+                            <select name="category_id" class="input-pink">
+                                <option value="">- Tanpa kategori -</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('category_id')" class="mt-1" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium text-brand mb-1">Status</label>
+                            <select name="status" class="input-pink">
+                                <option value="todo" @selected(old('status', 'todo') === 'todo')>Todo</option>
+                                <option value="in_progress" @selected(old('status') === 'in_progress')>In Progress</option>
+                                <option value="done" @selected(old('status') === 'done')>Done</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('status')" class="mt-1" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-brand mb-1">Prioritas</label>
+                            <select name="priority" class="input-pink">
+                                <option value="low" @selected(old('priority') === 'low')>Low</option>
+                                <option value="medium" @selected(old('priority', 'medium') === 'medium')>Medium</option>
+                                <option value="high" @selected(old('priority') === 'high')>High</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('priority')" class="mt-1" />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-brand mb-1">Deadline</label>
+                        <input type="date" name="due_date" value="{{ old('due_date') }}" class="input-pink"/>
+                        <x-input-error :messages="$errors->get('due_date')" class="mt-1" />
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-xs font-medium text-brand mb-1">Lampiran (opsional)</label>
+                        <input type="file" name="attachment" class="input-pink cursor-pointer"/>
+                        <p class="text-xs mt-1" style="color:#993556;">Maks. 2MB · Format: PDF, JPG, PNG</p>
+                        <x-input-error :messages="$errors->get('attachment')" class="mt-1" />
+                    </div>
+
+                    <div class="flex justify-end gap-3">
+                        <a href="{{ route('tasks.index') }}" class="btn-outline-pink">Batal</a>
+                        <button type="submit" class="btn-pink">Simpan Task</button>
+                    </div>
+                </form>
+            </div>
+        @endif
+
     </div>
 </x-app-layout>

@@ -1,3 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer components {
+    .btn-pink {
+        @apply bg-gradient-to-r from-pink-400 to-brand text-white border-none px-5 py-2 rounded-full text-sm font-medium cursor-pointer inline-flex items-center gap-2 hover:from-pink-500 hover:to-brand-hover transition-all;
+    }
+
+    .btn-outline-pink {
+        @apply bg-transparent text-brand border border-brand px-5 py-2 rounded-full text-sm cursor-pointer hover:bg-brand-light transition-all;
+    }
+
+    .input-pink {
+        @apply border border-brand-border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-border focus:border-brand w-full;
+    }
+
+    .card-pink {
+        @apply bg-white border border-brand-border rounded-2xl p-5;
+    }
+
+    .dot-pattern {
+        background-image: radial-gradient(circle, #F4C0D1 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+
+    .gradient-banner {
+        @apply bg-gradient-to-r from-brand-light to-pink-100 rounded-2xl px-6 py-4;
+    }
+}

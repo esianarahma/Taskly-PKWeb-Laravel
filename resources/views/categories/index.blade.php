@@ -1,58 +1,58 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Categories') }}
-            </h2>
-            <a href="{{ route('categories.create') }}" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
-                + Tambah Kategori
-            </a>
+            <div>
+                <h2 class="text-lg font-medium text-brand-dark">Categories</h2>
+                <p class="text-sm text-brand mt-1">Kelola label untuk task kamu</p>
+            </div>
+            <a href="{{ route('categories.create') }}" class="btn-pink">+ Tambah Kategori</a>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                @if (session('success'))
-                    <div class="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if ($categories->isEmpty())
-                    <p class="text-gray-500 text-sm">Belum ada kategori. Klik "Tambah Kategori" untuk membuat yang baru.</p>
-                @else
-                    <table class="w-full text-sm text-left">
-                        <thead class="border-b text-gray-500">
-                            <tr>
-                                <th class="py-2">Warna</th>
-                                <th class="py-2">Nama</th>
-                                <th class="py-2 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($categories as $category)
-                                <tr class="border-b">
-                                    <td class="py-2">
-                                        <span class="inline-block w-5 h-5 rounded-full border" style="background-color: {{ $category->color }}"></span>
-                                    </td>
-                                    <td class="py-2 font-medium">{{ $category->name }}</td>
-                                    <td class="py-2 text-right space-x-2">
-                                        <a href="{{ route('categories.edit', $category) }}" class="text-blue-600 hover:underline">Edit</a>
-                                        <form action="{{ route('categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kategori ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
-
+        @if (session('success'))
+            <div class="mb-4 p-3 rounded-xl text-sm" style="background:#EAF3DE;color:#27500A;">
+                {{ session('success') }}
             </div>
-        </div>
+        @endif
+
+        @if ($categories->isEmpty())
+            <div class="card-pink text-center py-12">
+                <p class="text-gray-500 text-sm mb-4">Belum ada kategori. Buat yang pertama!</p>
+                <a href="{{ route('categories.create') }}" class="btn-pink">+ Tambah Kategori</a>
+            </div>
+        @else
+            <div class="card-pink p-0 overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr style="background:linear-gradient(135deg,#FBEAF0,#FDF1F5);">
+                            <th class="text-left px-6 py-3 text-xs font-medium text-brand uppercase tracking-wide">Warna</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-brand uppercase tracking-wide">Nama</th>
+                            <th class="text-right px-6 py-3 text-xs font-medium text-brand uppercase tracking-wide">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($categories as $category)
+                            <tr class="border-t border-brand-border hover:bg-pink-50 transition-colors">
+                                <td class="px-6 py-3">
+                                    <span class="inline-block w-6 h-6 rounded-full border border-brand-border" style="background-color:{{ $category->color }}"></span>
+                                </td>
+                                <td class="px-6 py-3 font-medium text-brand-dark">{{ $category->name }}</td>
+                                <td class="px-6 py-3 text-right space-x-3">
+                                    <a href="{{ route('categories.edit', $category) }}" class="text-brand hover:text-brand-hover">Edit</a>
+                                    <form action="{{ route('categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kategori ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-500 hover:text-red-700">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
     </div>
 </x-app-layout>

@@ -1,38 +1,37 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Kategori') }}
-        </h2>
+        <h2 class="text-lg font-medium text-brand-dark">Edit Kategori</h2>
+        <p class="text-sm text-brand mt-1">Perbarui nama atau warna kategori</p>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="card-pink">
+            <form method="POST" action="{{ route('categories.update', $category) }}">
+                @csrf
+                @method('PUT')
 
-                <form method="POST" action="{{ route('categories.update', $category) }}">
-                    @csrf
-                    @method('PUT')
+                <div class="mb-4">
+                    <label class="block text-xs font-medium text-brand mb-1">Nama Kategori *</label>
+                    <input type="text" name="name" value="{{ old('name', $category->name) }}"
+                        class="input-pink" required autofocus/>
+                    <x-input-error :messages="$errors->get('name')" class="mt-1" />
+                </div>
 
-                    <div class="mb-4">
-                        <x-input-label for="name" :value="__('Nama Kategori')" />
-                        <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $category->name)" required autofocus />
-                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                <div class="mb-6">
+                    <label class="block text-xs font-medium text-brand mb-1">Warna</label>
+                    <div class="flex items-center gap-3">
+                        <input type="color" name="color" value="{{ old('color', $category->color) }}"
+                            class="h-10 w-16 rounded-lg border border-brand-border cursor-pointer"/>
+                        <span class="text-sm text-gray-500">Pilih warna untuk kategori ini</span>
                     </div>
+                    <x-input-error :messages="$errors->get('color')" class="mt-1" />
+                </div>
 
-                    <div class="mb-4">
-                        <x-input-label for="color" :value="__('Warna')" />
-                        <input id="color" name="color" type="color" value="{{ old('color', $category->color) }}"
-                            class="mt-1 block h-10 w-20 rounded-md border-gray-300 shadow-sm cursor-pointer">
-                        <x-input-error :messages="$errors->get('color')" class="mt-2" />
-                    </div>
-
-                    <div class="flex justify-end gap-3">
-                        <a href="{{ route('categories.index') }}" class="px-4 py-2 text-sm text-gray-600 hover:underline">Batal</a>
-                        <x-primary-button>{{ __('Update') }}</x-primary-button>
-                    </div>
-                </form>
-
-            </div>
+                <div class="flex justify-end gap-3">
+                    <a href="{{ route('categories.index') }}" class="btn-outline-pink">Batal</a>
+                    <button type="submit" class="btn-pink">Update</button>
+                </div>
+            </form>
         </div>
     </div>
 </x-app-layout>

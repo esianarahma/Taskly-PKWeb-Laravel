@@ -1,65 +1,67 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
+<nav class="bg-white border-b border-brand-border" x-data="{ open: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            <div class="flex items-center gap-8">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#ED93B1,#D4537E);">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-brand-dark text-base">Taskly</span>
+                </a>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.*')">
-                        {{ __('Tasks') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')">
-                        {{ __('Projects') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                        {{ __('Categories') }}
-                    </x-nav-link>
+                <!-- Desktop Nav Links -->
+                <div class="hidden sm:flex items-center gap-6">
+                    <a href="{{ route('dashboard') }}"
+                        class="text-sm font-medium pb-1 transition-colors {{ request()->routeIs('dashboard') ? 'text-brand border-b-2 border-brand' : 'text-gray-500 hover:text-brand' }}">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('tasks.index') }}"
+                        class="text-sm font-medium pb-1 transition-colors {{ request()->routeIs('tasks.*') ? 'text-brand border-b-2 border-brand' : 'text-gray-500 hover:text-brand' }}">
+                        Tasks
+                    </a>
+                    <a href="{{ route('projects.index') }}"
+                        class="text-sm font-medium pb-1 transition-colors {{ request()->routeIs('projects.*') ? 'text-brand border-b-2 border-brand' : 'text-gray-500 hover:text-brand' }}">
+                        Projects
+                    </a>
+                    <a href="{{ route('categories.index') }}"
+                        class="text-sm font-medium pb-1 transition-colors {{ request()->routeIs('categories.*') ? 'text-brand border-b-2 border-brand' : 'text-gray-500 hover:text-brand' }}">
+                        Categories
+                    </a>
                     @if (auth()->user()->isAdmin())
-                        <x-nav-link :href="route('admin.activity-logs')" :active="request()->routeIs('admin.*')">
-                            {{ __('Activity Logs') }}
-                        </x-nav-link>
+                        <a href="{{ route('admin.activity-logs') }}"
+                            class="text-sm font-medium pb-1 transition-colors {{ request()->routeIs('admin.*') ? 'text-brand border-b-2 border-brand' : 'text-gray-500 hover:text-brand' }}">
+                            Activity Logs
+                        </a>
                     @endif
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <!-- User Dropdown -->
+            <div class="hidden sm:flex items-center">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
+                        <button class="flex items-center gap-2 text-sm text-gray-600 hover:text-brand transition-colors">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-medium" style="background:linear-gradient(135deg,#ED93B1,#D4537E);">
+                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
                             </div>
+                            <span class="font-medium text-brand-dark">{{ auth()->user()->name }}</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
                         </button>
                     </x-slot>
-
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            Profil
                         </x-dropdown-link>
-
-                        <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                onclick="event.preventDefault(); this.closest('form').submit();">
+                                Keluar
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -68,61 +70,35 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                <button @click="open = !open" class="p-2 rounded-md text-gray-400 hover:text-brand hover:bg-brand-light transition">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path :class="{'hidden': open, 'inline-flex': !open}" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        <path :class="{'hidden': !open, 'inline-flex': open}" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.*')">
-                {{ __('Tasks') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')">
-                {{ __('Projects') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                {{ __('Categories') }}
-            </x-responsive-nav-link>
+    <!-- Responsive Menu -->
+    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-brand-border">
+        <div class="pt-2 pb-3 space-y-1 px-4">
+            <a href="{{ route('dashboard') }}" class="block py-2 text-sm {{ request()->routeIs('dashboard') ? 'text-brand font-medium' : 'text-gray-500' }}">Dashboard</a>
+            <a href="{{ route('tasks.index') }}" class="block py-2 text-sm {{ request()->routeIs('tasks.*') ? 'text-brand font-medium' : 'text-gray-500' }}">Tasks</a>
+            <a href="{{ route('projects.index') }}" class="block py-2 text-sm {{ request()->routeIs('projects.*') ? 'text-brand font-medium' : 'text-gray-500' }}">Projects</a>
+            <a href="{{ route('categories.index') }}" class="block py-2 text-sm {{ request()->routeIs('categories.*') ? 'text-brand font-medium' : 'text-gray-500' }}">Categories</a>
             @if (auth()->user()->isAdmin())
-                <x-responsive-nav-link :href="route('admin.activity-logs')" :active="request()->routeIs('admin.*')">
-                    {{ __('Activity Logs') }}
-                </x-responsive-nav-link>
+                <a href="{{ route('admin.activity-logs') }}" class="block py-2 text-sm {{ request()->routeIs('admin.*') ? 'text-brand font-medium' : 'text-gray-500' }}">Activity Logs</a>
             @endif
         </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
+        <div class="border-t border-brand-border px-4 py-3 space-y-1">
+            <p class="text-sm font-medium text-brand-dark">{{ auth()->user()->name }}</p>
+            <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
+            <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-500">Profil</a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="text-sm text-gray-500 py-2">Keluar</button>
+            </form>
         </div>
     </div>
 </nav>
